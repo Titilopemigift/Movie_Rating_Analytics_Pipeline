@@ -34,14 +34,6 @@ user_movie_lens.csv → User demographic info
 - *Incremental loading is based on the release_date column from item_movie_lens.csv.*
 
 
-Tool                             Purpose
-Google Drive            Cloud source for raw CSV data
-Pandas                  Data wrangling & transformation
-S3 Bucket               Raw & cleaned data storage
-PostgreSQL              Final data warehouse for analytics
-Power BI                Visualizations & summary statistics
-Apache Airflow          ETL orchestration and automation
-
 |Tool                    | Purpose|
 | ------                 | -------|
 | Google Drive         | Cloud source for raw CSV data|
