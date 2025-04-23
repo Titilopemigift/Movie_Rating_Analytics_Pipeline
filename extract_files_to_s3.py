@@ -46,9 +46,9 @@ region_key = os.getenv("REGION_KEY")
 # s3 Bucket details
 s3_bucket = 'movie-rating-project'
 s3_folder = 'movie_rating'
-s3_filename_user = 'merge_dataset'
+s3_filename = 'merge_dataset'
 
-s3_path = f"s3://{s3_bucket}/{s3_folder}/{s3_filename_user}"
+s3_path = f"s3://{s3_bucket}/{s3_folder}/{s3_filename}"
 
 
 # read merge file
