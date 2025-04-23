@@ -1,14 +1,13 @@
-import pandas as pd
-import os
 import datetime as dt
+import os
 from pathlib import Path
-from extract_files_to_s3 import df_movie_dataset
 
 import awswrangler as wr
 import boto3
 import pandas as pd
 from dotenv import load_dotenv
 
+from extract_files_to_s3 import df_movie_dataset
 
 # convert release date to datetime
 df_movie_dataset['release_date'] = pd.to_datetime(df_movie_dataset['release_date'], errors='coerce')
