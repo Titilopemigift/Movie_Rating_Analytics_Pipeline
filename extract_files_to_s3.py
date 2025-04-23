@@ -1,25 +1,39 @@
 import gdown
 import os
+from pathlib import Path
 
 import awswrangler as wr
 import boto3
 import pandas as pd
 from dotenv import load_dotenv
 
-# Download user_movie_lens"
-url ="https://drive.google.com/file/d/1_wAww5beF2K7dpx-SU_gUUddNWeaeZqv/view"
-output = "user_movie_lens.csv"
-gdown.download(url, output, quiet=False , fuzzy=True)
 
-# Download item_movie_lens"
-url = "https://drive.google.com/file/d/188tIKLJKek62rGmzj1Ylc03fe4Pgb5co/view"
-output = "item_movie_lens.csv"
-gdown.download(url, output, quiet=False, fuzzy=True)
+file_names = {
+    "data_movie_lens.csv": "1_8tzTD1BHaAa1joaCd5mAKvxQxDwiF6k",
+    "item_movie_lens.csv": "188tIKLJKek62rGmzj1Ylc03fe4Pgb5co",
+    "user_movie_lens.csv": "1_wAww5beF2K7dpx-SU_gUUddNWeaeZqv"
+}
 
-# Download data_movie_lens"
-url = "https://drive.google.com/file/d/1-3S-XOgZyo9D3sVoXtjPvmFdsihjfQhN/view"
-output = "data_movie_lens.csv"
-gdown.download(url, output, quiet=False, fuzzy=True)
+Path("raw_csv_files").mkdir(exist_ok=True)
+
+for filename, file_id in file_names.items():
+    url = f"https://drive.google.com/uc?id={file_id}"
+    gdown.download(url, f"raw_csv_files/{filename}", quiet=False, fuzzy=True)
+
+# read csv files
+df_data_movie = pd.read_csv("raw_csv_files/data_movie_lens.csv")
+df_user_movie = pd.read_csv("raw_csv_files/user_movie_lens.csv")
+df_item_movie = pd.read_csv("raw_csv_files/item_movie_lens.csv")
+
+# merge csv files
+
+rating_movie = pd.merge(df_data_movie, df_item_movie, on='item_id', how='left')
+
+full_merge_dataset = pd.merge(rating_movie, df_user_movie, on='user_id', how='left')
+
+full_merge_dataset.to_csv("merge_dataset.csv", index =False) 
+
+print("csv file successfully created")
 
 
 # Load environment variables from .env file
@@ -32,18 +46,13 @@ region_key = os.getenv("REGION_KEY")
 # s3 Bucket details
 s3_bucket = 'movie-rating-project'
 s3_folder = 'movie_rating'
-s3_filename_user = 'user_movie_lens'
-s3_filename_item = 'item_movie_lens'
-s3_filename_data =  'data_movie_lens'
+s3_filename_user = 'merge_dataset'
 
-s3_path_user = f"s3://{s3_bucket}/{s3_folder}/{s3_filename_user}"
-s3_path_item = f"s3://{s3_bucket}/{s3_folder}/{s3_filename_item}"
-s3_path_data = f"s3://{s3_bucket}/{s3_folder}/{s3_filename_data}"
+s3_path = f"s3://{s3_bucket}/{s3_folder}/{s3_filename_user}"
 
-# read csv files
-df_user_movie = pd.read_csv("user_movie_lens.csv")
-df_item_movie = pd.read_csv("item_movie_lens.csv")
-df_data_movie = pd.read_csv("data_movie_lens.csv")
+
+# read merge file
+df_movie_dataset = pd.read_csv("merge_dataset.csv")
 
 session = boto3.Session(
         aws_access_key_id=access_key,
@@ -52,31 +61,13 @@ session = boto3.Session(
 
 # Upload dataframe as a parquet file to S3
 wr.s3.to_parquet(
-    df = df_user_movie, 
-    path=s3_path_user,
+    df = df_movie_dataset, 
+    path=s3_path,
     dataset=True,
     mode='overwrite',
     index=False,
     boto3_session=session)
 
-wr.s3.to_parquet(
-    df = df_item_movie, 
-    path=s3_path_item,
-    dataset=True,
-    mode='overwrite',
-    index=False,
-    boto3_session=session)
+print(f"Data successfully uploaded to {s3_path}")
 
-wr.s3.to_parquet(
-    df = df_data_movie, 
-    path=s3_path_data,
-    dataset=True,
-    mode='overwrite',
-    index=False,
-    boto3_session=session)
-
-
-print(f"Data successfully uploaded to {s3_path_user}")
-print(f"Data successfully uploaded to {s3_path_item}")
-print(f"Data successfully uploaded to {s3_path_data}")
 
