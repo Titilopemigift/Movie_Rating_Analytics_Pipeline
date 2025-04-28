@@ -20,5 +20,5 @@ output = "user_movie_lens.csv"
 gdown.download(url, f"raw_csv_files/{output}", quiet=False , fuzzy=True)
 
 
-print("Extracted raw CSV files successfully.")
+print("Extracted raw CSV files successfully")
 
