@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 from pathlib import Path
 
 # Read raw CSVs
@@ -17,6 +18,6 @@ full_merge_dataset['release_month'] =full_merge_dataset['release_date'].dt.month
 
 # Save transformed file
 Path('transformed_files').mkdir(exist_ok=True)
-full_merge_dataset.to_csv('transformed_files/transformed_data.csv', index=False)
+full_merge_dataset.to_csv('transformed_files/transformed_data.csv', index=False, quoting=csv.QUOTE_ALL)
 
 print(" Transformed CSV file successfully created")
