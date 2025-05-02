@@ -6,13 +6,13 @@ from datetime import datetime
 default_args = {
     'owner': 'titi',
     'start_date': datetime(2025, 4, 28),
-    'retries': 1,
+    'retries': 1
 }
 
 with DAG(
     dag_id='movie_ratings_pipeline',
     default_args=default_args,
-    schedule_interval='@daily',   # Run once per day
+    schedule_interval='@daily',   
     chedule_interval='0 8 * * *',
     catchup=False
 ) as dag:
