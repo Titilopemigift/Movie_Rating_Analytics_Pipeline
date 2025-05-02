@@ -64,7 +64,7 @@ user_movie_lens.csv → User demographic info
    - Power BI connects to PostgreSQL
    - Dashboard includes:
      - KPIs: Total Ratings, Average Rating, Total Users, Highest Rating
-     - Charts: Top 10 Movies, Most rated Genres, Ratings by Genre, Gender, Top 5 Movies
+     - Charts: Top 10 Movies, Most rated Genres, Ratings by Gender, Top 5 Movies
      - Slicers: Genre, Gender, Date
 
 5. **Automation**
